@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;800&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="auth-view" class="auth" hidden>
+    <section class="brand" aria-hidden="true">
+      <h1 class="logo">Chatly</h1>
+      <p class="tagline">Talk to anyone, anywhere.</p>
+    </section>
+    <section class="panel">
+      <div class="tabs" role="tablist">
+        <button id="tab-login" class="tab active" role="tab" aria-selected="true">Log in</button>
+        <button id="tab-signup" class="tab" role="tab" aria-selected="false">Sign up</button>
+      </div>
+      <p id="message" class="message" role="alert" hidden></p>
+      <form id="login-form" class="form" novalidate>
+        <label>Email<input type="email" id="login-email" autocomplete="email" required></label>
+        <label>Password
+          <div class="pw"><input type="password" id="login-password" autocomplete="current-password" required><button type="button" class="toggle-pw" data-target="login-password">Show</button></div>
+        </label>
+        <button type="button" id="forgot" class="link">Forgot password?</button>
+        <button type="submit" class="primary" id="login-btn">Log in</button>
+      </form>
+      <form id="signup-form" class="form" novalidate hidden>
+        <label>Full name<input type="text" id="signup-name" autocomplete="name" required></label>
+        <label>Email<input type="email" id="signup-email" autocomplete="email" required></label>
+        <label>Password
+          <div class="pw"><input type="password" id="signup-password" autocomplete="new-password" minlength="6" required><button type="button" class="toggle-pw" data-target="signup-password">Show</button></div>
+        </label>
+        <label>Confirm password<input type="password" id="signup-confirm" autocomplete="new-password" required></label>
+        <button type="submit" class="primary" id="signup-btn">Create account</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="app-view" class="app" hidden>
+    <aside class="side">
+      <header class="side-head"><h2 id="side-title">Chats</h2><button id="mode-btn" class="icon" title="Dark mode">🌙</button></header>
+      <input id="search" class="search" type="search" placeholder="Search chats">
+      <div id="list" class="list"></div>
+      <nav class="nav">
+        <button data-tab="chats" class="active">Chats</button>
+        <button data-tab="status">Status</button>
+        <button data-tab="calls">Calls</button>
+        <button data-tab="profile">Settings</button>
+      </nav>
+    </aside>
+
+    <section class="main">
+      <div id="empty" class="empty"><h2>Chatly</h2><p>Select a chat to start messaging.</p></div>
+      <div id="chat" class="chat" hidden>
+        <header class="chat-head">
+          <button id="back" class="icon" aria-label="Back">←</button>
+          <div id="chat-av"></div>
+          <div class="meta"><b id="chat-name"></b><small id="chat-sub"></small></div>
+          <div class="head-actions">
+            <button id="call-audio" class="icon" title="Voice call" hidden>📞</button>
+            <button id="call-video" class="icon" title="Video call" hidden>🎥</button>
+            <button id="qr-btn" class="icon" title="QR code" hidden>▦</button>
+            <button id="csearch-btn" class="icon" title="Search messages">🔍</button>
+            <button id="priv-btn" class="icon" title="Make private" hidden>🔒</button>
+            <button id="theme-btn" class="icon" title="Chat theme">🎨</button>
+          </div>
+        </header>
+        <div id="pinbar" class="pinbar" hidden></div>
+        <div id="csearch" class="csearch" hidden><input id="csearch-in" type="search" placeholder="Search in this chat"></div>
+        <div id="msgs" class="msgs"></div>
+        <div id="emo" class="emo" hidden></div>
+        <div id="replybar" class="replybar" hidden><div><b id="rb-name"></b><span id="rb-text"></span></div><button id="rb-x" class="icon" type="button" aria-label="Cancel reply">✕</button></div>
+        <form id="composer" class="composer">
+          <label class="icon" title="Send a photo">📎<input type="file" id="attach" accept="image/*" hidden></label>
+          <button type="button" class="icon" id="loc-btn" title="Share location">📍</button>
+          <button type="button" class="icon" id="once-btn" title="Send as view-once photo">①</button>
+          <button type="button" class="icon" id="emo-btn" title="Emojis">😊</button>
+          <input id="text" placeholder="Type a message" autocomplete="off">
+          <button class="send" aria-label="Send">➤</button>
+        </form>
+      </div>
+    </section>
+
+    <div id="viewer" class="viewer" hidden>
+      <div class="v-top">
+        <div id="v-bars" class="bars"></div>
+        <div class="v-bar"><div id="v-user" class="v-user"></div><button id="v-seen" class="ghost light" hidden></button><button id="v-del" class="ghost light" hidden>Delete</button><button id="v-close" class="ghost light">Close</button></div>
+      </div>
+      <div id="v-body" class="v-body"></div>
+    </div>
+
+    <div id="modal" class="modal" hidden>
+      <div class="card">
+        <h3>New status</h3>
+        <textarea id="st-text" maxlength="200" placeholder="What's on your mind?"></textarea>
+        <label class="ghost">Add a photo<input type="file" id="st-img" accept="image/*" hidden></label>
+        <div class="actions"><button id="st-cancel" class="ghost">Cancel</button><button id="st-post" class="primary">Post</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lock" class="callui lock" hidden>
+    <h2>🔒</h2><b id="lock-title"></b>
+    <form id="lock-form" class="lock-form"><input id="lock-pin" type="password" inputmode="numeric" autocomplete="off"><small id="lock-err"></small><button class="primary">Unlock</button><button type="button" id="lock-cancel" class="ghost light">Cancel</button></form>
+  </div>
+  <div id="seen-modal" class="modal" hidden><div class="card"><h3>Seen by</h3><div id="seen-list"></div></div></div>
+  <div id="menu" class="menu" hidden></div>
+
+  <div id="theme-modal" class="modal" hidden><div class="card"><h3>Choose a theme</h3><div id="swatches" class="swatches"></div></div></div>
+
+  <div id="qr-modal" class="modal" hidden>
+    <div class="card">
+      <h3 id="qr-title"></h3>
+      <div id="qr-box"></div>
+      <p id="qr-link" class="qr-link"></p>
+      <div class="actions"><button id="qr-copy" class="ghost">Copy link</button><button id="qr-close" class="primary">Done</button></div>
+    </div>
+  </div>
+
+  <div id="call" class="callui" hidden>
+    <video id="remote" autoplay playsinline></video>
+    <video id="local" autoplay playsinline muted></video>
+    <div class="call-info"><div id="call-av"></div><b id="call-name"></b><span id="call-status"></span></div>
+    <div class="call-ctl"><button id="c-mic" class="round">🎤</button><button id="c-cam" class="round">📷</button><button id="c-end" class="round end">📞</button></div>
+  </div>
+
+  <div id="incoming" class="callui incoming" hidden>
+    <div class="call-info"><div id="in-av"></div><b id="in-name"></b><span id="in-type"></span></div>
+    <div class="call-ctl"><button id="in-no" class="round end">✕</button><button id="in-yes" class="round ok">📞</button></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
